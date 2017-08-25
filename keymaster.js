@@ -287,6 +287,7 @@ function factory(global, window) {
     global.key.getPressedKeyCodes = getPressedKeyCodes;
     global.key.noConflict = noConflict;
     global.key.unbind = unbindKey;
+    return global;
 }
 
 var storage = new WeakMap();
@@ -295,7 +296,8 @@ module.exports = function(window) {
   'use strict';
   var instance = storage.get(window);
   if (!instance) {
-    storage.set(window, factory({}, window));
+    instance = factory({}, window);
+    storage.set(window, instance);
   }
   return instance;
 };
