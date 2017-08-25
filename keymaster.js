@@ -294,12 +294,12 @@ function factory(win) {
 
 var storage = new WeakMap();
 
-module.exports = function(window) {
+module.exports = function(win) {
   'use strict';
-  var instance = storage.get(window);
+  var instance = storage.get(win);
   if (!instance) {
-    instance = factory(window);
-    storage.set(window, instance);
+    instance = factory(win);
+    storage.set(win, instance);
   }
   return instance;
 };
