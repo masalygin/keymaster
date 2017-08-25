@@ -1,6 +1,8 @@
-function factory(global, window) {
+function factory(win) {
   'use strict';
     var k,
+        res = {},
+        doc = win.document,
         _handlers = {},
         _mods = { 16: false, 18: false, 17: false, 91: false },
         _scope = 'all',
@@ -257,37 +259,37 @@ function factory(global, window) {
         if (object.addEventListener)
             object.addEventListener(event, method, false);
         else if(object.attachEvent)
-            object.attachEvent('on'+event, function(){ method(window.event) });
+            object.attachEvent('on'+event, function(){ method(win.event) });
     };
 
     // set the handlers globally on document
-    addEvent(document, 'keydown', function(event) { dispatch(event) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
-    addEvent(document, 'keyup', clearModifier);
+    addEvent(doc, 'keydown', function(event) { dispatch(event) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
+    addEvent(doc, 'keyup', clearModifier);
 
     // reset modifiers to false whenever the window is (re)focused.
-    addEvent(window, 'focus', resetModifiers);
+    addEvent(win, 'focus', resetModifiers);
 
     // store previously defined key
-    var previousKey = global.key;
+    var previousKey = res.key;
 
     // restore previously defined key and return reference to our key object
     function noConflict() {
-        var k = global.key;
-        global.key = previousKey;
+        var k = res.key;
+        res.key = previousKey;
         return k;
     }
 
     // set window.key and window.key.set/get/deleteScope, and the default filter
-    global.key = assignKey;
-    global.key.setScope = setScope;
-    global.key.getScope = getScope;
-    global.key.deleteScope = deleteScope;
-    global.key.filter = filter;
-    global.key.isPressed = isPressed;
-    global.key.getPressedKeyCodes = getPressedKeyCodes;
-    global.key.noConflict = noConflict;
-    global.key.unbind = unbindKey;
-    return global.key;
+    res.key = assignKey;
+    res.key.setScope = setScope;
+    res.key.getScope = getScope;
+    res.key.deleteScope = deleteScope;
+    res.key.filter = filter;
+    res.key.isPressed = isPressed;
+    res.key.getPressedKeyCodes = getPressedKeyCodes;
+    res.key.noConflict = noConflict;
+    res.key.unbind = unbindKey;
+    return res.key;
 }
 
 var storage = new WeakMap();
@@ -296,7 +298,7 @@ module.exports = function(window) {
   'use strict';
   var instance = storage.get(window);
   if (!instance) {
-    instance = factory({}, window);
+    instance = factory(window);
     storage.set(window, instance);
   }
   return instance;
